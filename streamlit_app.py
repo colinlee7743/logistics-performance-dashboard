@@ -32,6 +32,28 @@ def custom_quarter(date):
       quarter = 4
       
     return pd.Period(year=fiscal_year, quarter=quarter, freq='Q')
+                     
+def calculate_kpis(df):
+    """Calculate key performance indicators"""
+    total_deliveries = len(df)
+    on_time_count = len(df[df['on_time']])
+    on_time_rate = (on_time_count / total_deliveries * 100) if total_deliveries > 0 else 0
+    
+    avg_delay = df[df['delay_minutes'] > 15]['delay_minutes'].mean()
+    avg_delay = avg_delay if not pd.isna(avg_delay) else 0
+    
+    total_cost = df['delivery_cost'].sum()
+    total_distance = df['distance_km'].sum()
+    avg_rating = df['customer_rating'].mean()
+    
+    return {
+        'total_deliveries': total_deliveries,
+        'on_time_rate': round(on_time_rate, 1),
+        'avg_delay': round(avg_delay, 1),
+        'total_cost': round(total_cost, 2),
+        'total_distance': round(total_distance, 1),
+        'avg_rating': round(avg_rating, 2) if not pd.isna(avg_rating) else 0
+    }
 
 # Load data
 df = load_data()
