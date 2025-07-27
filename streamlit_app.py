@@ -13,25 +13,93 @@ def load_data():
     df = pd.read_csv("data/deliveries.csv")
     df['date'] = pd.to_datetime(df['date'])
     df['on_time'] = df['delay_minutes'] <= 15
+
+    # Add time grouping columns
+    df['year'] = df['date'].dt.year
+    df['month'] = df['date'].dt.month
+    df['week'] = df['date'].dt.isocalendar().week
+    df['day_of_week'] = df['date'].dt.day_name()
+    df['month_year'] = df['date'].dt.to_period('M').astype(str)
+    df['week_year'] = df['date'].dt.to_period('W').astype(str)
+
+    # Fiscal year (July-June) and Fiscal quarter
+    df['fiscal_year'] = df['date'].apply(lambda x: x.year if x.month >= 7 else x.year - 1)
+    def fiscal_quarter(month):
+        if month in [7, 8, 9]:
+            return 'Q1'
+        elif month in [10, 11, 12]:
+            return 'Q2'
+        elif month in [1, 2, 3]:
+            return 'Q3'
+        else:  # Apr–Jun
+            return 'Q4'
+
+    df['fiscal_quarter'] = df['date'].dt.month.apply(fiscal_quarter)
+    
     return df
 
-def custom_quarter(date):
-    month = date.month
-    year = date.year
-    if month in [7, 8, 9]:        # Jul–Sep: Q1
-      fiscal_year = year
-      quarter = 1
-    elif month in [10, 11, 12]:  # Oct–Dec: Q2
-      fiscal_year = year
-      quarter = 2
-    elif month in [1, 2, 3]:     # Jan–Mar: Q3
-      fiscal_year = year - 1
-      quarter = 3
-    else:                        # Apr–Jun: Q4
-      fiscal_year = year - 1
-      quarter = 4
-      
-    return pd.Period(year=fiscal_year, quarter=quarter, freq='Q')
+def get_aggregated_data(df, grouping='Daily'):
+    """Aggregate data by selected time period in a scalable way""" 
+    # Define the aggregation logic
+    agg_dict = {
+        'delivery_id': 'count',
+        'on_time': 'mean',
+        'delay_minutes': 'mean',
+        'delivery_cost': 'sum',
+        'fuel_cost': 'sum',
+        'distance_km': 'sum',
+        'customer_rating': 'mean'
+    }
+
+    # Column rename mapping
+    col_rename = {
+        'delivery_id': 'Total_Deliveries',
+        'on_time': 'On_Time_Rate',
+        'delay_minutes': 'Avg_Delay',
+        'delivery_cost': 'Total_Cost',
+        'fuel_cost': 'Total_Fuel',
+        'distance_km': 'Total_Distance',
+        'customer_rating': 'Avg_Rating'
+    }
+
+    # Define group-by keys per grouping type
+    group_keys = {
+        'Daily': ['date'],
+        'Weekly': ['week_year'],
+        'Monthly': ['month_year'],
+        'Quarterly': ['fiscal_year', 'fiscal_quarter']
+    }
+
+    if grouping not in group_keys:
+        raise ValueError(f"Unsupported grouping: {grouping}")
+
+    # Group and aggregate
+    grouped = df.groupby(group_keys[grouping]).agg(agg_dict).reset_index()
+    
+    # Handle 'Period' column
+    if grouping == 'Quarterly':
+        grouped['Period'] = grouped['fiscal_year'].astype(str) + '-' + grouped['fiscal_quarter']
+        grouped = grouped.drop(['fiscal_year', 'fiscal_quarter'], axis=1)
+    else:
+        grouped = grouped.rename(columns={group_keys[grouping][0]: 'Period'})
+        
+    # Rename metric columns
+    grouped = grouped.rename(columns=col_rename)
+
+    # Reorder columns
+    metric_cols = list(col_rename.values())
+    final_columns = ['Period'] + metric_cols
+    grouped = grouped[final_columns]
+
+    # Convert percentages and round numbers
+    grouped['On_Time_Rate'] = (grouped['On_Time_Rate'] * 100).round(1)
+    grouped['Avg_Delay'] = grouped['Avg_Delay'].round(1)
+    grouped['Total_Cost'] = grouped['Total_Cost'].round(2)
+    grouped['Total_Fuel'] = grouped['Total_Fuel'].round(2)
+    grouped['Total_Distance'] = grouped['Total_Distance'].round(1)
+    grouped['Avg_Rating'] = grouped['Avg_Rating'].round(2)
+    
+    return grouped
                      
 def calculate_kpis(df):
     """Calculate key performance indicators"""
@@ -55,6 +123,44 @@ def calculate_kpis(df):
         'avg_rating': round(avg_rating, 2) if not pd.isna(avg_rating) else 0
     }
 
+def create_trend_chart(df, grouping='Daily'):
+    """Create trend chart based on selected grouping"""
+    grouped_data = get_aggregated_data(df, grouping)
+    
+    fig = make_subplots(specs=[[{"secondary_y": True}]])
+    
+    # Add delivery count bars
+    fig.add_trace(
+        go.Bar(x=grouped_data['Period'], y=grouped_data['Total_Deliveries'],
+               name="Deliveries", marker_color='lightblue'),
+        secondary_y=False,
+    )
+    
+    # Add on-time rate line
+    fig.add_trace(
+        go.Scatter(x=grouped_data['Period'], y=grouped_data['On_Time_Rate'],
+                  name="On-Time Rate (%)", line=dict(color='red', width=3)),
+        secondary_y=True,
+    )
+    
+    title_map = {
+        'Daily': '📈 Daily Performance Trends',
+        'Weekly': '📈 Weekly Performance Trends', 
+        'Monthly': '📈 Monthly Performance Trends',
+        'Quarterly': '📈 Quarterly Performance Trends'
+    }
+    
+    fig.update_layout(
+        title=title_map[grouping],
+        xaxis_title="Period",
+        height=400,
+        xaxis={'categoryorder': 'category ascending'}
+    )
+    fig.update_yaxes(title_text="Number of Deliveries", secondary_y=False)
+    fig.update_yaxes(title_text="On-Time Rate (%)", secondary_y=True)
+    
+    return fig
+    
 # Load data
 df = load_data()
 
@@ -74,8 +180,12 @@ with st.sidebar:
     default_end_date = max_date
     start_date = st.date_input("Start date", default_start_date, min_value=min_date, max_value=max_date)
     end_date = st.date_input("End date", default_end_date, min_value=min_date, max_value=max_date)
-    time_frame = st.selectbox("Select time frame",
-                              ("Daily", "Weekly", "Monthly", "Quarterly"))
+    time_frame = st.selectbox(
+        "Select time frame",
+        options = ["Daily", "Weekly", "Monthly", "Quarterly"],
+        index=2,  # Default to monthly,
+        help="Choose how to aggregate the data for trend analysis"
+    )
 
 # Apply filters
 filtered_df = df[(df['date'].dt.date >= start_date) & (df['date'].dt.date <= end_date)]
@@ -149,3 +259,17 @@ with col4:
         value=f"{deliveries_per_day:.1f}",
         help="Average deliveries per day"
     )
+
+# Charts section
+st.header("📈 Performance Analytics")
+
+# Row 1: Trend and Driver Performance
+col1, col2 = st.columns(2)
+
+with col1:
+    trend_chart = create_trend_chart(filtered_df)
+    st.plotly_chart(trend_chart, use_container_width=True)
+
+#with col2:
+#    driver_chart = create_driver_chart(filtered_df)
+#    st.plotly_chart(driver_chart, use_container_width=True)
