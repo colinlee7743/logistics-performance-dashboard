@@ -4,4 +4,4 @@ import numpy as np
 
 st.title('🚛 Logistics Performance Dashboard')
 
-st.markdwon('Real-time insights into delivery operations and performance')
+st.markdown('Real-time insights into delivery operations and performance')
