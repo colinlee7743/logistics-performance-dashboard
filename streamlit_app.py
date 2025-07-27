@@ -54,5 +54,76 @@ with st.sidebar:
     end_date = st.date_input("End date", default_end_date, min_value=min_date, max_value=max_date)
     time_frame = st.selectbox("Select time frame",
                               ("Daily", "Weekly", "Monthly", "Quarterly"))
-    selected_drivers = st.selectbox("Select Drivers",
-        options=df['driver'].unique())
+
+# Apply filters
+filtered_df = df[(df['date'].dt.date >= start_date) & (df['date'].dt.date <= end_date)]
+
+# Calculate KPIs
+kpis = calculate_kpis(filtered_df)
+
+# Display KPIs in cards
+st.header("📊 Key Performance Indicators")
+
+col1, col2, col3, col4 = st.columns(4)
+
+with col1:
+    st.metric(
+        label="📦 Total Deliveries",
+        value=f"{kpis['total_deliveries']:,}",
+        help="Total number of deliveries in selected period"
+    )
+
+with col2:
+    st.metric(
+        label="⏰ On-Time Rate",
+        value=f"{kpis['on_time_rate']}%",
+        delta=f"Target: 95%",
+        help="Percentage of deliveries completed within 15 minutes of scheduled time"
+    )
+
+with col3:
+    st.metric(
+        label="🕐 Avg Delay",
+        value=f"{kpis['avg_delay']:.0f} min",
+        help="Average delay time for late deliveries"
+    )
+
+with col4:
+    st.metric(
+        label="⭐ Avg Rating",
+        value=f"{kpis['avg_rating']:.1f}/5.0",
+        help="Average customer satisfaction rating"
+    )
+
+# Additional KPIs row
+col1, col2, col3, col4 = st.columns(4)
+
+with col1:
+    st.metric(
+        label="💰 Total Cost",
+        value=f"${kpis['total_cost']:,.0f}",
+        help="Total delivery costs"
+    )
+
+with col2:
+    st.metric(
+        label="🛣️ Total Distance",
+        value=f"{kpis['total_distance']:,.0f} km",
+        help="Total distance covered"
+    )
+
+with col3:
+    cost_per_km = kpis['total_cost'] / kpis['total_distance'] if kpis['total_distance'] > 0 else 0
+    st.metric(
+        label="📏 Cost per KM",
+        value=f"${cost_per_km:.2f}",
+        help="Average cost per kilometer"
+    )
+
+with col4:
+    deliveries_per_day = kpis['total_deliveries'] / len(filtered_df['date'].dt.date.unique())
+    st.metric(
+        label="📅 Daily Average",
+        value=f"{deliveries_per_day:.1f}",
+        help="Average deliveries per day"
+    )
