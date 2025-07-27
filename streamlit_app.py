@@ -6,6 +6,8 @@ from datetime import timedelta, datetime
 # Set page config
 st.set_page_config(page_title="Logistics Dashboard", page_icon="🚛", layout="wide")
 
+# Reference - https://github.com/dataprofessor/dashboard-kit/blob/master/streamlit_app.py
+
 # Helper functions
 @st.cache_data
 def load_data():
