@@ -50,8 +50,8 @@ def calculate_kpis(df):
         'total_deliveries': total_deliveries,
         'on_time_rate': round(on_time_rate, 1),
         'avg_delay': round(avg_delay, 1),
-        'total_cost': round(total_cost/1000000, 1),
-        'total_distance': round(total_distance/1000, 1),
+        'total_cost': round(total_cost, 1),
+        'total_distance': round(total_distance, 1),
         'avg_rating': round(avg_rating, 2) if not pd.isna(avg_rating) else 0
     }
 
@@ -123,14 +123,14 @@ col1, col2, col3, col4 = st.columns(4)
 with col1:
     st.metric(
         label="💰 Total Cost",
-        value=f"${kpis['total_cost']:,.0f}M",
+        value=f"${kpis['total_cost']/1000000:,.1f}M",
         help="Total delivery costs"
     )
 
 with col2:
     st.metric(
         label="🛣️ Total Distance",
-        value=f"{kpis['total_distance']:,.0f}K km",
+        value=f"{kpis['total_distance']/1000:,.0f}K km",
         help="Total distance covered"
     )
 
