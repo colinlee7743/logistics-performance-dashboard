@@ -43,14 +43,15 @@ st.logo(image="images/streamlit-logo-primary-colormark-lighttext.png",
 with st.sidebar:
     st.title("YouTube Channel Dashboard")
     st.header("⚙️ Settings")
+
+    # Date range filter
+    min_date = df['date'].min().date()
+    max_date = df['date'].max().date()
     
-    max_date = df['DATE'].max().date()
-    default_start_date = max_date - timedelta(days=365)  # Show a year by default
+    default_start_date = min_date
     default_end_date = max_date
-    start_date = st.date_input("Start date", default_start_date, min_value=df['DATE'].min().date(), max_value=max_date)
-    end_date = st.date_input("End date", default_end_date, min_value=df['DATE'].min().date(), max_value=max_date)
+    start_date = st.date_input("Start date", default_start_date, min_value=min_date, max_value=max_date)
+    end_date = st.date_input("End date", default_end_date, min_value=min_date, max_value=max_date)
     time_frame = st.selectbox("Select time frame",
                               ("Daily", "Weekly", "Monthly", "Quarterly"),
     )
-    chart_selection = st.selectbox("Select a chart type",
-                                   ("Bar", "Area"))
