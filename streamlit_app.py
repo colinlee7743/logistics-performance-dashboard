@@ -56,8 +56,7 @@ with st.sidebar:
                               ("Daily", "Weekly", "Monthly", "Quarterly"),
     )
 
-    selected_drivers = st.sidebar.multiselect(
-        "Select Drivers",
+    selected_drivers = st.selectbox("Select Drivers",
         options=df['driver'].unique(),
         default=df['driver'].unique()
     )
