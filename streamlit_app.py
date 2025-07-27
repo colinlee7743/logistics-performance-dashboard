@@ -53,10 +53,6 @@ with st.sidebar:
     start_date = st.date_input("Start date", default_start_date, min_value=min_date, max_value=max_date)
     end_date = st.date_input("End date", default_end_date, min_value=min_date, max_value=max_date)
     time_frame = st.selectbox("Select time frame",
-                              ("Daily", "Weekly", "Monthly", "Quarterly"),
-    )
-
+                              ("Daily", "Weekly", "Monthly", "Quarterly"))
     selected_drivers = st.selectbox("Select Drivers",
-        options=df['driver'].unique(),
-        default=df['driver'].unique()
-    )
+        options=df['driver'].unique())
