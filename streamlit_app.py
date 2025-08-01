@@ -129,39 +129,12 @@ def create_trend_chart(df, grouping='Daily'):
     """Create trend chart based on selected grouping"""
     grouped_data = get_aggregated_data(df, grouping)
     
-    fig = make_subplots(specs=[[{"secondary_y": True}]])
+    grouped_data.set_index('Period', inplace=True)
     
-    # Add delivery count bars
-    fig.add_trace(
-        go.Bar(x=grouped_data['Period'], y=grouped_data['Total_Deliveries'],
-               name="Deliveries", marker_color='lightblue'),
-        secondary_y=False,
-    )
-    
-    # Add on-time rate line
-    fig.add_trace(
-        go.Scatter(x=grouped_data['Period'], y=grouped_data['On_Time_Rate'],
-                  name="On-Time Rate (%)", line=dict(color='red', width=3)),
-        secondary_y=True,
-    )
-    
-    title_map = {
-        'Daily': '📈 Daily Performance Trends',
-        'Weekly': '📈 Weekly Performance Trends', 
-        'Monthly': '📈 Monthly Performance Trends',
-        'Quarterly': '📈 Quarterly Performance Trends'
-    }
-    
-    fig.update_layout(
-        title=title_map[grouping],
-        xaxis_title="Period",
-        height=400,
-        xaxis={'categoryorder': 'category ascending'}
-    )
-    fig.update_yaxes(title_text="Number of Deliveries", secondary_y=False)
-    fig.update_yaxes(title_text="On-Time Rate (%)", secondary_y=True)
-    
-    return fig
+    # Bar chart: Number of deliveries by period
+    st.subheader("📦 Deliveries by Period")
+    st.bar_chart(grouped_data['Total_Deliveries'])
+
     
 # Load data
 df = load_data()
