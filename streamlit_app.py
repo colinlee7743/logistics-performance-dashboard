@@ -128,31 +128,32 @@ def calculate_kpis(df):
 
     
 def create_driver_chart(df):
-    """Show on-time rate by driver, sorted descending"""
+    """Return an Altair bar chart showing on-time rate by driver, sorted descending"""
+    # Aggregate data
     driver_data = df.groupby('driver').agg(
         On_Time_Rate=('on_time', 'mean')
     ).reset_index()
 
-    driver_data = driver_data.rename(columns={'driver': 'Driver'})
+    # Rename and convert to percentage
+    driver_data = driver_data.rename(columns={'driver': 'Driver Name'})
     driver_data['On_Time_Rate'] = round(driver_data['On_Time_Rate'] * 100, 1)
-    
+
     # Sort in descending order
     driver_data_sorted = driver_data.sort_values(by='On_Time_Rate', ascending=False)
 
     # Create Altair chart
     chart = alt.Chart(driver_data_sorted).mark_bar().encode(
-        x=alt.X('Driver Name:N', sort=driver_data_sorted['Driver'].tolist(), title='Driver'),
+        x=alt.X('Driver Name:N', sort=driver_data_sorted['Driver Name'].tolist(), title='Driver'),
         y=alt.Y('On_Time_Rate:Q', title='On-Time Rate (%)'),
-        tooltip=['Driver', 'On_Time_Rate']
+        tooltip=['Driver Name', 'On_Time_Rate']
     ).properties(
         width=700,
         height=400,
-        #title='On-Time Rate by Driver'
+        title='On-Time Rate by Driver (Descending)'
     )
 
     return chart
 
-    
 # Load data
 df = load_data()
 
