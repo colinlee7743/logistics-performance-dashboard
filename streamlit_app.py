@@ -261,4 +261,4 @@ with col2:
 with col3:
     driver_data = create_driver_chart(filtered_df)
     st.subheader("🚚 On-Time Rate by Driver (Highest First)")
-    st.bar_chart(driver_data['On_Time_Rate (%)'])
+    st.bar_chart(driver_data['On_Time_Rate'])
