@@ -149,7 +149,7 @@ def create_driver_chart(df):
     ).properties(
         width=700,
         height=400,
-        title='On-Time Rate by Driver (Descending)'
+        #title='On-Time Rate by Driver (Descending)'
     )
 
     return chart
