@@ -275,6 +275,4 @@ with col3:
     st.subheader("🚚 On-Time Rate by Driver")
     chart = create_driver_chart(df)
     st.altair_chart(chart, use_container_width=True)
-    #driver_data = create_driver_chart(filtered_df)
-    
-    #st.bar_chart(driver_data['On_Time_Rate'])
+
