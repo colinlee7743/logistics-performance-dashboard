@@ -196,9 +196,9 @@ def create_cost_chart(df, grouping='Monthly'):
     
 def create_cost_efficiency_chart(df, grouping='Monthly'):
     grouped_data = get_aggregated_data(df, grouping)
-    grouped_data['Cost_per_KM'] = grouped['Total_Cost'] / grouped['Total_Distance']
+    grouped_data['Cost_per_KM'] = grouped_data['Total_Cost'] / grouped['Total_Distance']
     
-    chart = alt.Chart(grouped).mark_line(point=True).encode(
+    chart = alt.Chart(grouped_data).mark_line(point=True).encode(
         x=alt.X('Period:N', title='Period'),
         y=alt.Y('Cost_per_KM:Q', title='Cost per KM ($)'),
         tooltip=['Period', alt.Tooltip('Cost_per_KM:Q', format='$,.2f')]
