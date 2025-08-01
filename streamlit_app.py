@@ -133,7 +133,7 @@ def create_driver_chart(df):
 
     driver_data = driver_data.rename(columns={'driver': 'Driver Name'})
     driver_data['On_Time_Rate'] = round(driver_data['On_Time_Rate'] * 100, 1)
-    driver_data = driver_data.sort_values(by='On_Time_Rate', ascending=True)  # Sort in descending order
+    driver_data = driver_data.sort_values(by='On_Time_Rate', ascending=False)  # Sort in descending order
 
     # Set index for chart
     driver_data.set_index('Driver Name', inplace=True)
