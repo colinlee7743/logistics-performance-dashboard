@@ -1,4 +1,4 @@
-import streamlit as st
+eimport streamlit as st
 import pandas as pd
 import numpy as np
 from datetime import timedelta, datetime
@@ -21,9 +21,8 @@ def load_data():
     df['month'] = df['date'].dt.month
     df['week'] = df['date'].dt.isocalendar().week
     df['day_of_week'] = df['date'].dt.day_name()
-    df['month_year'] = df['date'].dt.to_period('M').apply(lambda p: p.start_time.strftime('%Y-%m-%d')) # Show starting day only
-    #df['month_year'] = df['date'].dt.to_period('M').astype(str)
-    df['week_year'] = df['date'].dt.to_period('W').astype(str)
+    df['month_year'] = df['date'].dt.to_period('M').astype(str)
+    df['week_year'] = df['date'].dt.to_period('W').apply(lambda p: p.start_time.strftime('%Y-%m-%d')) # Show starting day only
 
     # Fiscal year (July-June) and Fiscal quarter
     df['fiscal_year'] = df['date'].apply(lambda x: x.year if x.month >= 7 else x.year - 1)
