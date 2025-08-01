@@ -132,10 +132,10 @@ def create_driver_chart(df):
     ).reset_index()
 
     # Convert to percentage
-    driver_data['On_Time_Rate (%)'] = driver_data['On_Time_Rate'] * 100
+    driver_data['On_Time_Rate (%)'] = round(driver_data['On_Time_Rate'] * 100,1)
 
     # Sort by On-Time Rate descending
-    driver_data = driver_data.sort_values(by='On_Time_Rate (%)', ascending=False)
+    driver_data = driver_data.sort_values(by='On_Time_Rate (%)', ascending=True)
 
     # Set index for chart
     driver_data.set_index('driver', inplace=True)
