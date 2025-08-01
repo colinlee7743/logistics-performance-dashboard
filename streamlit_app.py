@@ -144,7 +144,7 @@ def create_delivery_chart(df, grouping="Daily"):
         #title='Deliveries per Period'
     )
 
-return chart
+    return chart
 
 def create_driver_chart(df):
     """Return an Altair bar chart showing on-time rate by driver, sorted descending"""
