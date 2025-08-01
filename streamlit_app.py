@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
+import plotly.express as px
 from datetime import timedelta, datetime
 
 # Set page config
@@ -126,15 +127,18 @@ def calculate_kpis(df):
     }
 
 def create_trend_chart(df, grouping='Daily'):
-    """Create trend chart based on selected grouping"""
     grouped_data = get_aggregated_data(df, grouping)
     
-    grouped_data.set_index('Period', inplace=True)
+    fig = px.bar(
+        grouped_data,
+        x='Period',
+        y='Total_Deliveries',
+        title='📦 Deliveries by Period',
+        labels={'Total_Deliveries': 'Deliveries'}
+    )
     
-    # Bar chart: Number of deliveries by period
-    st.subheader("📦 Deliveries by Period")
-    st.bar_chart(grouped_data['Total_Deliveries'])
-
+    fig.update_layout(xaxis_title='Period', yaxis_title='Deliveries')
+    return fig
     
 # Load data
 df = load_data()
@@ -242,7 +246,7 @@ st.header("📈 Performance Analytics")
 col1, col2 = st.columns(2)
 
 with col1:
-    trend_chart = create_trend_chart(filtered_df)
+    trend_chart = create_trend_chart(filtered_df, grouping=time_frame)
     st.plotly_chart(trend_chart, use_container_width=True)
 
 #with col2:
