@@ -237,9 +237,9 @@ col1, col2 = st.columns(2)
 
 with col1:
     # Bar chart: Number of deliveries by period
-    st.subheader(f"📦 Deliveries by {time_frame}")
+    st.subheader(f"📦 Number of Deliveries by {time_frame}")
     st.bar_chart(grouped_data['Total_Deliveries'])  # this directly renders it
     
 with col2:
-    st.subheader(f"⏰ On-Time Rate by {time_frame}")
+    st.subheader(f"⏰ On-Time Rate (%) by {time_frame}")
     st.line_chart(grouped_data['On_Time_Rate'])
