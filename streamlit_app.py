@@ -341,7 +341,7 @@ with col2:
     st.altair_chart(line_chart, use_container_width=True)
 
 with col3:
-    st.subheader("💰 Total Cost and Fuel Consumption Over Time")
+    st.subheader("💰 Total Delivery and Fuel Cost and Fuel")
     cost_chart = create_cost_chart(filtered_df, grouping=time_frame)
     st.altair_chart(cost_chart, use_container_width=True)
 
