@@ -131,7 +131,7 @@ def create_trend_chart(df, grouping='Daily'):
     grouped_data.set_index('Period', inplace=True)
     
     # Bar chart: Number of deliveries by period
-    st.subheader("📦 Deliveries by {grouping}")
+    st.subheader(f"📦 Deliveries by {grouping}")
     st.bar_chart(grouped_data['Total_Deliveries'])  # this directly renders it
     
 # Load data
