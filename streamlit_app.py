@@ -126,7 +126,7 @@ def calculate_kpis(df):
         'avg_rating': round(avg_rating, 2) if not pd.isna(avg_rating) else 0
     }
 
-def create_delivery_chart(df, grouping="Daily"):
+def create_delivery_chart(df, grouping='Monthly'):
     """Return an Altair bar chart showing number of delivery by period"""
     # Get grouped data once
     grouped_data = get_aggregated_data(df, grouping)
@@ -141,7 +141,7 @@ def create_delivery_chart(df, grouping="Daily"):
     ).properties(height=300, width=300)
     return chart
 
-def create_ontime_chart(df, grouping="Daily"):
+def create_ontime_chart(df, grouping='Monthly'):
     """Return an Altair bar chart showing number of delivery by period"""
     # Get grouped data once
     grouped_data = get_aggregated_data(df, grouping)
@@ -165,7 +165,7 @@ def create_delay_chart(df):
     ).properties(height=300, width=300)
     return chart
     
-def create_cost_chart(df, grouping="Daily"):
+def create_cost_chart(df, grouping='Monthly'):
     """Return an Altair line chart showing total deliveries cost and fuel cost by period"""
     # Get grouped data once
     grouped_data = get_aggregated_data(df, grouping)
@@ -190,10 +190,19 @@ def create_cost_chart(df, grouping="Daily"):
             alt.Tooltip('Metric:N', title='Metric'),
             alt.Tooltip('Value:Q', title='Amount', format='$,.0f')
         ]
-    ).properties(
-        width=300,
-        height=300
-    )
+    ).properties(height=300, width=300)
+    
+    return chart
+    
+def create_cost_efficiency_chart(df, grouping='Monthly'):
+    grouped_data = get_aggregated_data(df, grouping)
+    grouped_data['Cost_per_KM'] = grouped['Total_Cost'] / grouped['Total_Distance']
+    
+    chart = alt.Chart(grouped).mark_line(point=True).encode(
+        x=alt.X('Period:N', title='Period'),
+        y=alt.Y('Cost_per_KM:Q', title='Cost per KM ($)'),
+        tooltip=['Period', alt.Tooltip('Cost_per_KM:Q', format='$,.2f')]
+    ).properties(height=300, width=300)
     
     return chart
     
@@ -323,7 +332,7 @@ with col8:
 # Charts section
 st.header(f"📈 {time_frame} Performance Analytics")
 
-# Row 1: Trend and Cost Performance
+# Row 1: Trend Performance
 col1, col2, col3 = st.columns(3)
 
 with col1:
@@ -341,13 +350,18 @@ with col3:
     delay_chart = create_delay_chart(filtered_df)
     st.altair_chart(delay_chart, use_container_width=True)
 
-    #st.subheader("💰 Total Delivery and Fuel Cost")
-    #cost_chart = create_cost_chart(filtered_df, grouping=time_frame)
-    #st.altair_chart(cost_chart, use_container_width=True)
 
 # Row 2: Driver Performance
 col1, col2, col3 = st.columns(3)
 with col1:
+    st.subheader("📏 Delivery Cost Efficiency")
+    cost_eff_chart = create_cost_efficiency_chart(filtered_df, grouping=time_frame)
+    st.altair_chart(cost_eff_chart, use_container_width=True)
+with col2:
+    st.subheader("💰 Total Delivery and Fuel Cost")
+    cost_chart = create_cost_chart(filtered_df, grouping=time_frame)
+    st.altair_chart(cost_chart, use_container_width=True)
+with col3:
     st.subheader("🚚 On-Time Rate by Driver")
     driver_chart = create_driver_chart(df)
     st.altair_chart(driver_chart, use_container_width=True)
