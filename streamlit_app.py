@@ -226,7 +226,7 @@ with col4:
     )
 
 # Charts section
-st.header("📈 {time_frame} Performance Analytics")
+st.header(f"📈 {time_frame} Performance Analytics")
 
 # Get grouped data once
 grouped_data = get_aggregated_data(filtered_df, grouping=time_frame)
