@@ -144,6 +144,9 @@ def create_driver_chart(df):
         x=alt.X('Driver Name:N', sort=driver_data_sorted['Driver'].tolist(), title='Driver'),
         y=alt.Y('On_Time_Rate:Q', title='On-Time Rate (%)'),
         tooltip=['Driver Name', 'On_Time_Rate']
+    ).properties(
+        width=300,
+        height=300,
     )
 
     return chart
