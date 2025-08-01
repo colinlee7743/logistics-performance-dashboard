@@ -125,15 +125,7 @@ def calculate_kpis(df):
         'avg_rating': round(avg_rating, 2) if not pd.isna(avg_rating) else 0
     }
 
-def create_trend_chart(df, grouping='Daily'):
-    """Create trend chart based on selected grouping"""
-    grouped_data = get_aggregated_data(df, grouping)
-    grouped_data.set_index('Period', inplace=True)
-    
-    # Bar chart: Number of deliveries by period
-    st.subheader(f"📦 Deliveries by {grouping}")
-    st.bar_chart(grouped_data['Total_Deliveries'])  # this directly renders it
-    
+
 # Load data
 df = load_data()
 
@@ -236,11 +228,17 @@ with col4:
 # Charts section
 st.header("📈 Performance Analytics")
 
+# Get grouped data once
+grouped_data = get_aggregated_data(filtered_df, grouping=time_frame)
+grouped_data.set_index('Period', inplace=True)
+
 # Row 1: Trend and Driver Performance
 col1, col2 = st.columns(2)
 
 with col1:
-    create_trend_chart(filtered_df, grouping=time_frame)
+    # Bar chart: Number of deliveries by period
+    st.subheader(f"📦 Deliveries by {time_frame}")
+    st.bar_chart(grouped_data['Total_Deliveries'])  # this directly renders it
     
 #with col2:
 #    driver_chart = create_driver_chart(filtered_df)
