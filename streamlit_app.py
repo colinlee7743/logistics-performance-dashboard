@@ -226,7 +226,7 @@ with col4:
     )
 
 # Charts section
-st.header("📈 Performance Analytics")
+st.header("📈 {time_frame} Performance Analytics")
 
 # Get grouped data once
 grouped_data = get_aggregated_data(filtered_df, grouping=time_frame)
@@ -237,9 +237,9 @@ col1, col2 = st.columns(2)
 
 with col1:
     # Bar chart: Number of deliveries by period
-    st.subheader(f"📦 Number of Deliveries by {time_frame}")
+    st.subheader(f"📦 Number of Deliveries")
     st.bar_chart(grouped_data['Total_Deliveries'])  # this directly renders it
     
 with col2:
-    st.subheader(f"⏰ On-Time Rate (%) by {time_frame}")
+    st.subheader(f"⏰ On-Time Rate (%)")
     st.line_chart(grouped_data['On_Time_Rate'])
