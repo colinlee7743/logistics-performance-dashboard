@@ -176,7 +176,7 @@ def create_cost_chart(df, grouping="Daily"):
     melted_df = pd.melt(
     grouped_data_reset,
     id_vars=['Period'],
-    value_vars=['total_cost', 'total_fuel'],
+    value_vars=['Total_cost', 'Total_fuel'],
     var_name='Metric',
     value_name='Value'
     )
