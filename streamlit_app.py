@@ -126,35 +126,28 @@ def calculate_kpis(df):
         'avg_rating': round(avg_rating, 2) if not pd.isna(avg_rating) else 0
     }
 
+    
 def create_driver_chart(df):
     """Show on-time rate by driver, sorted descending"""
     driver_data = df.groupby('driver').agg(
         On_Time_Rate=('on_time', 'mean')
     ).reset_index()
 
-    driver_data = driver_data.rename(columns={'driver': 'Driver Name'})
+    driver_data = driver_data.rename(columns={'driver': 'Driver'})
     driver_data['On_Time_Rate'] = round(driver_data['On_Time_Rate'] * 100, 1)
-    #driver_data_sorted = driver_data.sort_values(by='On_Time_Rate', ascending=False)  # Sort in descending order
-
-    # Set index for chart
-    #driver_data_sorted.set_index('Driver Name', inplace=True)
     
     # Sort in descending order
     driver_data_sorted = driver_data.sort_values(by='On_Time_Rate', ascending=False)
 
     # Create Altair chart
     chart = alt.Chart(driver_data_sorted).mark_bar().encode(
-        x=alt.X('Driver Name:N', sort=driver_data_sorted['Driver Name'].tolist(), title='Driver'),
+        x=alt.X('Driver Name:N', sort=driver_data_sorted['Driver'].tolist(), title='Driver'),
         y=alt.Y('On_Time_Rate:Q', title='On-Time Rate (%)'),
         tooltip=['Driver Name', 'On_Time_Rate']
-    ).properties(
-        width=700,
-        height=400,
-        title='On-Time Rate by Driver (Descending)'
     )
 
     return chart
-    #return driver_data_sorted
+
     
 # Load data
 df = load_data()
