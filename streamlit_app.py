@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
+import altair as alt
 from datetime import timedelta, datetime
 
 # Set page config
@@ -133,12 +134,27 @@ def create_driver_chart(df):
 
     driver_data = driver_data.rename(columns={'driver': 'Driver Name'})
     driver_data['On_Time_Rate'] = round(driver_data['On_Time_Rate'] * 100, 1)
-    driver_data_sorted = driver_data.sort_values(by='On_Time_Rate', ascending=False)  # Sort in descending order
+    #driver_data_sorted = driver_data.sort_values(by='On_Time_Rate', ascending=False)  # Sort in descending order
 
     # Set index for chart
-    driver_data_sorted.set_index('Driver Name', inplace=True)
+    #driver_data_sorted.set_index('Driver Name', inplace=True)
     
-    return driver_data_sorted
+    # Sort in descending order
+    driver_data_sorted = driver_data.sort_values(by='On_Time_Rate', ascending=False)
+
+    # Create Altair chart
+    chart = alt.Chart(driver_data_sorted).mark_bar().encode(
+        x=alt.X('Driver Name:N', sort=driver_data_sorted['Driver Name'].tolist(), title='Driver'),
+        y=alt.Y('On_Time_Rate:Q', title='On-Time Rate (%)'),
+        tooltip=['Driver Name', 'On_Time_Rate']
+    ).properties(
+        width=700,
+        height=400,
+        title='On-Time Rate by Driver (Descending)'
+    )
+
+    return chart
+    #return driver_data_sorted
     
 # Load data
 df = load_data()
@@ -259,6 +275,9 @@ with col2:
     st.line_chart(grouped_data['On_Time_Rate'])
 
 with col3:
-    driver_data = create_driver_chart(filtered_df)
     st.subheader("🚚 On-Time Rate by Driver")
-    st.bar_chart(driver_data['On_Time_Rate'])
+    chart = create_driver_chart(df)
+    st.altair_chart(chart, use_container_width=True)
+    #driver_data = create_driver_chart(filtered_df)
+    
+    #st.bar_chart(driver_data['On_Time_Rate'])
