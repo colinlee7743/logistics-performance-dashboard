@@ -186,7 +186,11 @@ def create_cost_chart(df, grouping="Daily"):
         x=alt.X('Period:N', title='Period'),
         y=alt.Y('Value:Q', title='Amount'),
         color=alt.Color('Metric:N', title='Metric'),
-        tooltip=['Period', 'Metric', 'Value']
+        tooltip=[
+            alt.Tooltip('Period:N', title='Period'),
+            alt.Tooltip('Metric:N', title='Metric'),
+            alt.Tooltip('Value:Q', title='Amount', format='$,.0f')
+        ]
     ).properties(
         width=300,
         height=300
