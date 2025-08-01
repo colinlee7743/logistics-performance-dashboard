@@ -344,6 +344,7 @@ with col3:
 
 # Row 2: Driver Performance
 col1, col2, col3 = st.columns(3)
+with col1:
     st.subheader("🚚 On-Time Rate by Driver")
     driver_chart = create_driver_chart(df)
     st.altair_chart(driver_chart, use_container_width=True)
