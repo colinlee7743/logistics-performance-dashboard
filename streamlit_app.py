@@ -240,6 +240,6 @@ with col1:
     st.subheader(f"📦 Deliveries by {time_frame}")
     st.bar_chart(grouped_data['Total_Deliveries'])  # this directly renders it
     
-#with col2:
-#    driver_chart = create_driver_chart(filtered_df)
-#    st.plotly_chart(driver_chart, use_container_width=True)
+with col2:
+    st.subheader(f"⏰ On-Time Rate by {time_frame}")
+    st.line_chart(grouped_data['On_Time_Rate'])
