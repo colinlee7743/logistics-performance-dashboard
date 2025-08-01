@@ -174,11 +174,11 @@ def create_cost_chart(df, grouping="Daily"):
     grouped_data_reset = grouped_data.reset_index()
 
     melted_df = pd.melt(
-    grouped_data_reset,
-    id_vars=['Period'],
-    value_vars=['Total_cost', 'Total_fuel'],
-    var_name='Metric',
-    value_name='Value'
+        grouped_data_reset,
+        id_vars=['Period'],
+        value_vars=['Total_Cost', 'Total_Fuel'],
+        var_name='Metric',
+        value_name='Value'
     )
     
     #  Create Altair chart
