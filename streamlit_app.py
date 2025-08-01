@@ -291,9 +291,6 @@ with col4:
         help="Average customer satisfaction rating"
     )
 
-# Additional KPIs row
-#col1, col2, col3, col4 = st.columns(4)
-
 with col5:
     st.metric(
         label="💰 Total Cost",
@@ -327,7 +324,7 @@ with col8:
 # Charts section
 st.header(f"📈 {time_frame} Performance Analytics")
 
-# Row 1: Trend and Driver Performance
+# Row 1: Trend and Cost Performance
 col1, col2, col3 = st.columns(3)
 
 with col1:
@@ -345,7 +342,9 @@ with col3:
     cost_chart = create_cost_chart(filtered_df, grouping=time_frame)
     st.altair_chart(cost_chart, use_container_width=True)
 
-    #st.subheader("🚚 On-Time Rate by Driver")
-    #chart = create_driver_chart(df)
-    #st.altair_chart(chart, use_container_width=True)
+# Row 2: Driver Performance
+col1, col2, col3 = st.columns(3)
+    st.subheader("🚚 On-Time Rate by Driver")
+    driver_chart = create_driver_chart(df)
+    st.altair_chart(driver_chart, use_container_width=True)
 
