@@ -186,8 +186,8 @@ def create_driver_chart(df):
         y=alt.Y('On_Time_Rate:Q', title='On-Time Rate (%)'),
         tooltip=['Driver Name', 'On_Time_Rate']
     ).properties(
-        width=700,
-        height=400,
+        width=300,
+        height=300,
         #title='On-Time Rate by Driver (Descending)'
     )
 
