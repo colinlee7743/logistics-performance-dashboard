@@ -21,7 +21,7 @@ def load_data():
     df['month'] = df['date'].dt.month
     df['week'] = df['date'].dt.isocalendar().week
     df['day_of_week'] = df['date'].dt.day_name()
-    df['month_year'] = df['date'].dt.to_period('M').astype(str).apply(lambda p: p.start_time.strftime('%Y-%m-%d')) # Show starting day only
+    df['month_year'] = df['date'].dt.to_period('M').apply(lambda p: p.start_time.strftime('%Y-%m-%d')) # Show starting day only
     #df['month_year'] = df['date'].dt.to_period('M').astype(str)
     df['week_year'] = df['date'].dt.to_period('W').astype(str)
 
