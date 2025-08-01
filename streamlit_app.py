@@ -165,6 +165,34 @@ def create_ontime_chart(df, grouping="Daily"):
     )
 
     return chart
+
+def create_cost_chart(df, grouping="Daily"):
+    """Return an Altair line chart showing total deliveries cost and fuel cost by period"""
+    # Get grouped data once
+    grouped_data = get_aggregated_data(df, grouping)
+    grouped_data.set_index('Period', inplace=True)
+    grouped_data_reset = grouped_data.reset_index()
+
+    melted_df = pd.melt(
+    grouped_data_reset,
+    id_vars=['Period'],
+    value_vars=['total_cost', 'total_fuel'],
+    var_name='Metric',
+    value_name='Value'
+    )
+    
+    #  Create Altair chart
+    chart = alt.Chart(melted_df).mark_line(point=True).encode(
+        x=alt.X('Period:N', title='Period'),
+        y=alt.Y('Value:Q', title='Amount'),
+        color=alt.Color('Metric:N', title='Metric'),
+        tooltip=['Period', 'Metric', 'Value']
+    ).properties(
+        width=300,
+        height=300
+    )
+    
+    return chart
     
 def create_driver_chart(df):
     """Return an Altair bar chart showing on-time rate by driver, sorted descending"""
@@ -309,7 +337,11 @@ with col2:
     st.altair_chart(line_chart, use_container_width=True)
 
 with col3:
-    st.subheader("🚚 On-Time Rate by Driver")
-    chart = create_driver_chart(df)
-    st.altair_chart(chart, use_container_width=True)
+    st.subheader("💰 Total Cost and Fuel Consumption Over Time")
+    cost_chart = create_cost_chart(filtered_df, grouping=time_frame)
+    st.altair_chart(cost_chart, use_container_width=True)
+
+    #st.subheader("🚚 On-Time Rate by Driver")
+    #chart = create_driver_chart(df)
+    #st.altair_chart(chart, use_container_width=True)
 
