@@ -138,12 +138,7 @@ def create_delivery_chart(df, grouping="Daily"):
         x=alt.X('Period:N', title='Period'),
         y=alt.Y('Total_Deliveries:Q', title='Number of Deliveries'),
         tooltip=['Period', 'Total_Deliveries']
-    ).properties(
-        height=300,
-        width=300,
-        #title='Deliveries per Period'
-    )
-
+    ).properties(height=300, width=300)
     return chart
 
 def create_ontime_chart(df, grouping="Daily"):
@@ -158,14 +153,18 @@ def create_ontime_chart(df, grouping="Daily"):
         x=alt.X('Period:N', title='Period'),
         y=alt.Y('On_Time_Rate:Q', title='On-Time Rate (%)'),
         tooltip=['Period', 'On_Time_Rate']
-    ).properties(
-        height=300,
-        width=300,
-        #title='On-Time Rate Over Time'
-    )
-
+    ).properties(height=300, width=300)
     return chart
 
+def create_delay_chart(df):
+    delay_df = df[df['delay_minutes'] > 0]  # Exclude on-time deliveries
+    chart = alt.Chart(delay_df).mark_bar().encode(
+        x=alt.X('delay_minutes:Q', bin=alt.Bin(maxbins=30), title='Delay Minutes'),
+        y=alt.Y('count()', title='Number of Deliveries'),
+        tooltip=['count()']
+    ).properties(height=300, width=300)
+    return chart
+    
 def create_cost_chart(df, grouping="Daily"):
     """Return an Altair line chart showing total deliveries cost and fuel cost by period"""
     # Get grouped data once
@@ -338,9 +337,13 @@ with col2:
     st.altair_chart(line_chart, use_container_width=True)
 
 with col3:
-    st.subheader("💰 Total Delivery and Fuel Cost")
-    cost_chart = create_cost_chart(filtered_df, grouping=time_frame)
-    st.altair_chart(cost_chart, use_container_width=True)
+    st.subheader("📉 Delay Distribution")
+    delay_chart = create_delay_distribution_chart(filtered_df)
+    st.altair_chart(delay_chart, use_container_width=True)
+
+    #st.subheader("💰 Total Delivery and Fuel Cost")
+    #cost_chart = create_cost_chart(filtered_df, grouping=time_frame)
+    #st.altair_chart(cost_chart, use_container_width=True)
 
 # Row 2: Driver Performance
 col1, col2, col3 = st.columns(3)
