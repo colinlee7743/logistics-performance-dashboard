@@ -138,7 +138,7 @@ def create_driver_chart(df):
     driver_data = driver_data.sort_values(by='On_Time_Rate (%)', ascending=False)
 
     # Set index for chart
-    driver_data.set_index('driver_name', inplace=True)
+    driver_data.set_index('driver', inplace=True)
     
     return driver_data
     
