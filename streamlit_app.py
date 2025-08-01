@@ -125,7 +125,23 @@ def calculate_kpis(df):
         'avg_rating': round(avg_rating, 2) if not pd.isna(avg_rating) else 0
     }
 
+def create_driver_chart(df):
+    """Show on-time rate by driver, sorted descending"""
+    driver_data = df.groupby('driver').agg(
+        On_Time_Rate=('on_time', 'mean')
+    ).reset_index()
 
+    # Convert to percentage
+    driver_data['On_Time_Rate (%)'] = driver_data['On_Time_Rate'] * 100
+
+    # Sort by On-Time Rate descending
+    driver_data = driver_data.sort_values(by='On_Time_Rate (%)', ascending=False)
+
+    # Set index for chart
+    driver_data.set_index('driver_name', inplace=True)
+    
+    return driver_data
+    
 # Load data
 df = load_data()
 
@@ -233,7 +249,7 @@ grouped_data = get_aggregated_data(filtered_df, grouping=time_frame)
 grouped_data.set_index('Period', inplace=True)
 
 # Row 1: Trend and Driver Performance
-col1, col2 = st.columns(2)
+col1, col2, col3 = st.columns(3)
 
 with col1:
     # Bar chart: Number of deliveries by period
@@ -243,3 +259,8 @@ with col1:
 with col2:
     st.subheader(f"⏰ On-Time Rate (%)")
     st.line_chart(grouped_data['On_Time_Rate'])
+
+with col3:
+    driver_data = create_driver_chart(filter_data)
+    st.subheader("🚚 On-Time Rate by Driver (Highest First)")
+    st.bar_chart(driver_data['On_Time_Rate (%)'])
