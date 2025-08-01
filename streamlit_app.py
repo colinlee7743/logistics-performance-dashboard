@@ -328,17 +328,17 @@ col1, col2, col3 = st.columns(3)
 
 with col1:
     st.subheader(f"📦 Number of Deliveries")
-    bar_chart = create_delivery_chart(filtered_df, grouping=time_frame)
-    st.altair_chart(bar_chart, use_container_width=True)
+    delivery_chart = create_delivery_chart(filtered_df, grouping=time_frame)
+    st.altair_chart(delivery_chart, use_container_width=True)
 
 with col2:
     st.subheader(f"⏰ On-Time Rate (%)")
-    line_chart = create_ontime_chart(filtered_df, grouping=time_frame)
-    st.altair_chart(line_chart, use_container_width=True)
+    ontime_chart = create_ontime_chart(filtered_df, grouping=time_frame)
+    st.altair_chart(ontime_chart, use_container_width=True)
 
 with col3:
     st.subheader("📉 Delay Distribution")
-    delay_chart = create_delay_distribution_chart(filtered_df)
+    delay_chart = create_delay_chart(filtered_df)
     st.altair_chart(delay_chart, use_container_width=True)
 
     #st.subheader("💰 Total Delivery and Fuel Cost")
