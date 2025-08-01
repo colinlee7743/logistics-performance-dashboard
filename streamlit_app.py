@@ -305,7 +305,7 @@ with col1:
 
 with col2:
     st.subheader(f"⏰ On-Time Rate (%)")
-    line_chart = create_delivery_chart(filtered_df, grouping=time_frame)
+    line_chart = create_ontime_chart(filtered_df, grouping=time_frame)
     st.altair_chart(line_chart, use_container_width=True)
 
 with col3:
