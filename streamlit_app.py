@@ -260,7 +260,7 @@ kpis = calculate_kpis(filtered_df)
 # Display KPIs in cards
 st.header("📊 Key Performance Indicators")
 
-col1, col2, col3, col4 = st.columns(4)
+col1, col2, col3, col4, col5, col6, col7, col8 = st.columns(8)
 
 with col1:
     st.metric(
@@ -292,23 +292,23 @@ with col4:
     )
 
 # Additional KPIs row
-col1, col2, col3, col4 = st.columns(4)
+#col1, col2, col3, col4 = st.columns(4)
 
-with col1:
+with col5:
     st.metric(
         label="💰 Total Cost",
         value=f"${kpis['total_cost']/1000000:,.1f}M",
         help="Total delivery costs"
     )
 
-with col2:
+with col6:
     st.metric(
         label="🛣️ Total Distance",
         value=f"{kpis['total_distance']/1000:,.0f}K km",
         help="Total distance covered"
     )
 
-with col3:
+with col7:
     cost_per_km = kpis['total_cost'] / kpis['total_distance'] if kpis['total_distance'] > 0 else 0
     st.metric(
         label="📏 Cost per KM",
@@ -316,7 +316,7 @@ with col3:
         help="Average cost per kilometer"
     )
 
-with col4:
+with col8:
     deliveries_per_day = kpis['total_deliveries'] / len(filtered_df['date'].dt.date.unique())
     st.metric(
         label="📅 Daily Average",
