@@ -127,18 +127,13 @@ def calculate_kpis(df):
     }
 
 def create_trend_chart(df, grouping='Daily'):
+    """Create trend chart based on selected grouping"""
     grouped_data = get_aggregated_data(df, grouping)
+    grouped_data.set_index('Period', inplace=True)
     
-    fig = px.bar(
-        grouped_data,
-        x='Period',
-        y='Total_Deliveries',
-        title='📦 Deliveries by Period',
-        labels={'Total_Deliveries': 'Deliveries'}
-    )
-    
-    fig.update_layout(xaxis_title='Period', yaxis_title='Deliveries')
-    return fig
+    # Bar chart: Number of deliveries by period
+    st.subheader("📦 Deliveries by Period")
+    st.bar_chart(grouped_data['Total_Deliveries'])  # this directly renders it
     
 # Load data
 df = load_data()
@@ -246,9 +241,8 @@ st.header("📈 Performance Analytics")
 col1, col2 = st.columns(2)
 
 with col1:
-    trend_chart = create_trend_chart(filtered_df, grouping=time_frame)
-    st.plotly_chart(trend_chart, use_container_width=True)
-
+    create_trend_chart(filtered_df, grouping=time_frame)
+    
 #with col2:
 #    driver_chart = create_driver_chart(filtered_df)
 #    st.plotly_chart(driver_chart, use_container_width=True)
