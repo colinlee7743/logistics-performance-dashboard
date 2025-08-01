@@ -157,7 +157,7 @@ def create_ontime_chart(df, grouping="Daily"):
     return chart
 
 def create_delay_chart(df):
-    delay_df = df[df['delay_minutes'] > 0]  # Exclude on-time deliveries
+    delay_df = df[df['delay_minutes'] > 15]  # Consider on-time if within 15 minutes
     chart = alt.Chart(delay_df).mark_bar().encode(
         x=alt.X('delay_minutes:Q', bin=alt.Bin(maxbins=15), title='Delay Minutes'),
         y=alt.Y('count()', title='Number of Deliveries'),
