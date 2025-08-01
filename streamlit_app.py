@@ -159,7 +159,7 @@ def create_ontime_chart(df, grouping="Daily"):
 def create_delay_chart(df):
     delay_df = df[df['delay_minutes'] > 0]  # Exclude on-time deliveries
     chart = alt.Chart(delay_df).mark_bar().encode(
-        x=alt.X('delay_minutes:Q', bin=alt.Bin(maxbins=30), title='Delay Minutes'),
+        x=alt.X('delay_minutes:Q', bin=alt.Bin(maxbins=15), title='Delay Minutes'),
         y=alt.Y('count()', title='Number of Deliveries'),
         tooltip=['count()']
     ).properties(height=300, width=300)
@@ -337,7 +337,7 @@ with col2:
     st.altair_chart(ontime_chart, use_container_width=True)
 
 with col3:
-    st.subheader("📉 Delay Distribution")
+    st.subheader("🕐 Delay Distribution")
     delay_chart = create_delay_chart(filtered_df)
     st.altair_chart(delay_chart, use_container_width=True)
 
