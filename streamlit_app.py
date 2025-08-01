@@ -126,7 +126,26 @@ def calculate_kpis(df):
         'avg_rating': round(avg_rating, 2) if not pd.isna(avg_rating) else 0
     }
 
-    
+def create_delivery_chart(df, grouping="Daily"):
+    """Return an Altair bar chart showing number of delivery by period"""
+    # Get grouped data once
+    grouped_data = get_aggregated_data(df, grouping)
+    grouped_data.set_index('Period', inplace=True)
+    grouped_data_reset = grouped_data.reset_index()
+
+    # Create Altair chart
+    chart = alt.Chart(grouped_data_reset).mark_bar().encode(
+        x=alt.X('Period:N', title='Period'),
+        y=alt.Y('Total_Deliveries:Q', title='Number of Deliveries'),
+        tooltip=['Period', 'Total_Deliveries']
+    ).properties(
+        height=300,
+        width=300,
+        #title='Deliveries per Period'
+    )
+
+return chart
+
 def create_driver_chart(df):
     """Return an Altair bar chart showing on-time rate by driver, sorted descending"""
     # Aggregate data
@@ -256,17 +275,15 @@ with col4:
 # Charts section
 st.header(f"📈 {time_frame} Performance Analytics")
 
-# Get grouped data once
-grouped_data = get_aggregated_data(filtered_df, grouping=time_frame)
-grouped_data.set_index('Period', inplace=True)
-
 # Row 1: Trend and Driver Performance
 col1, col2, col3 = st.columns(3)
 
 with col1:
     # Bar chart: Number of deliveries by period
     st.subheader(f"📦 Number of Deliveries")
-    st.bar_chart(grouped_data['Total_Deliveries'])  # this directly renders it
+    bar_chart = create_delivery_chart(filtered_df, grouping=time_frame)
+    st.altair_chart(bar_chart, use_container_width=True)
+    #st.bar_chart(grouped_data['Total_Deliveries'])  # this directly renders it
     
 with col2:
     st.subheader(f"⏰ On-Time Rate (%)")
