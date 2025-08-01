@@ -261,6 +261,6 @@ with col2:
     st.line_chart(grouped_data['On_Time_Rate'])
 
 with col3:
-    driver_data = create_driver_chart(filter_data)
+    driver_data = create_driver_chart(filtered_df)
     st.subheader("🚚 On-Time Rate by Driver (Highest First)")
     st.bar_chart(driver_data['On_Time_Rate (%)'])
